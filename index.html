@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory System with Login</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: url("background.jpg") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .box {
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 50px;
+            color: rgb(12, 1, 1);
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+            background: rgb(145, 112, 112);
+            color: black;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th {
+            background: #333;
+            color: rgb(24, 23, 23);
+        }
+    </style>
+</head>
+
+<body>
+
+<!--  LOGIN SCREEN -->
+<div id="loginBox" class="box">
+    <h2> Login</h2>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;"></p>
+</div>
+
+<!-- 📦 INVENTORY SYSTEM -->
+<div id="app" class="box" style="display:none;">
+
+<h1>📦 Inventory Management</h1>
+<h3 id="summary"></h3>
+<input type="text" id="search" placeholder="🔍 Search product..." onkeyup="display()">
+
+<input type="text" id="name" placeholder="Product Name">
+<input type="number" id="qty" placeholder="Quantity">
+<input type="number" id="price" placeholder="Price">
+
+<br>
+
+<button onclick="addProduct()">➕ Add</button>
+<button onclick="clearInputs()">🧹 Clear</button>
+<button onclick="clearAll()">🗑️ Delete All</button>
+<button onclick="logout()">🚪 Logout</button>
+
+<h2>Product List</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="table"></tbody>
+</table>
+
+</div>
+
+<script>
+let products = [];
+
+/*  LOGIN SYSTEM */
+function login() {
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
+
+    // 🔑 CHANGE THIS LOGIN
+    if(user === "admin" && pass === "1234") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+    } else {
+        document.getElementById("error").innerText = "Wrong username or password!";
+    }
+}
+
+function logout() {
+    document.getElementById("app").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+}
+
+/* 📦 INVENTORY SYSTEM */
+function addProduct() {
+    let name = document.getElementById("name").value;
+    let qty = document.getElementById("qty").value;
+    let price = document.getElementById("price").value;
+
+    if(name === "" || qty === "" || price === "") {
+        alert("Fill all fields!");
+        return;
+    }
+
+    products.push({name, qty, price});
+    display();
+    clearInputs();
+}
+
+function display() {
+    function display() {
+    let table = document.getElementById("table");
+    table.innerHTML = "";
+
+    let totalProducts = products.length;
+    let totalQty = 0;
+    let totalSales = 0;
+
+    products.forEach((p, i) => {
+        let total = p.qty * p.price;
+
+        totalQty += Number(p.qty);
+        totalSales += total;
+
+        table.innerHTML += `
+        <tr>
+            <td>${p.name}</td>
+            <td>${p.qty}</td>
+            <td>${p.price}</td>
+            <td>${total}</td>
+            <td><button onclick="deleteProduct(${i})">❌</button></td>
+        </tr>`;
+    });
+
+    document.getElementById("summary").innerHTML =
+        "📦 Products: " + totalProducts +
+        " | 🧮 Quantity: " + totalQty +
+        " | 💰 Total Sales: ₱" + totalSales;
+}
+    let table = document.getElementById("table");
+    table.innerHTML = "";
+
+    products.forEach((p, index) => {
+        let total = p.qty * p.price;
+
+        table.innerHTML += `
+            <tr>
+                <td>${p.name}</td>
+                <td>${p.qty}</td>
+                <td>${p.price}</td>
+                <td>${total}</td>
+                <td><button onclick="deleteProduct(${index})">❌</button></td>
+            </tr>
+        `;
+    });
+}
+
+function deleteProduct(i) {
+    products.splice(i, 1);
+    display();
+}
+
+function clearInputs() {
+    document.getElementById("name").value = "";
+    document.getElementById("qty").value = "";
+    document.getElementById("price").value = "";
+}
+
+function clearAll() {
+    products = [];
+    display();
+}
+</script>
+
+</body>
+</html>
+<style>
+    #summary {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+
+        /* 🎨 FULL BACKGROUND */
+        background: url("background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh;
+    }
+
+    /* 🌑 DARK OVERLAY (makes text readable) */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+
+    /* 📦 MAIN CONTAINER */
+    .box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 800px;
+        margin: 50px auto;
+        color: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1, h2 {
+        margin-bottom: 15px;
+    }
+
+    input {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        border: none;
+        width: 150px;
+    }
+
+    button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: #00c6ff;
+        color: white;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #0072ff;
+    }
+
+    table {
+        margin-top: 15px;
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        color: black;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Register System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 320px;
+            text-align: center;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Create Account</h2>
+
+    <form action="/register" method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <button type="submit">Register & Enter</button>
+    </form>
+
+    <a href="/guest">
+        <button>Continue as Guest</button>
+    </a>
+</div>
+
+</body>
+</html>
